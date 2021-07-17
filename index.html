@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- OG Meta Tags for Social Media Queries --> 
+    <meta property="og:title" content="BB"/> 
+    <meta property="og:image" content="https://raw.githubusercontent.com/1e9end/bb/main/BB.png"/>
+    <meta property="og:description" content="Trophy Pushing Tracker for BB Clubs" /> 
+    <meta property="og:url" content= "https://1e9end.github.io/bb"/> 
+    <meta property="og:type" content="website"/>
+
+    <title>BB</title>
+
+    <link rel="icon" type="image/png" href= "https://raw.githubusercontent.com/1e9end/bb/main/favicon.png"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src = "main.js" defer></script>
+    <style>
+        body{
+            overflow-x: hidden;
+            font-family: sans-serif;
+            margin: 0;
+        }
+        /* Header/Logo Title */
+        #header{
+            background: #2453FF;
+            padding: 15px;
+            height: 10vh;
+            color: white;
+        }
+        .v-center{
+            display: block;
+            position: relative; 
+            top: 50%; 
+            -ms-transform: translateY(-50%);
+            -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+        #top-scroller-wrapper{
+            height: 20px; 
+        }
+        #clubDiv{
+            display: block;
+            position: relative;
+            margin-top: 2vh;
+            overflow-y: auto;
+        }
+        #leaderboardDiv{
+            display: block;
+            position: relative;
+            margin-top: 2vh;
+            margin-bottom: 40px;
+            height: 80vh;
+            overflow-x: auto;
+            overflow-y: auto;
+        }
+        #footer{
+            background-color: #CCCCCC;
+            position: fixed;
+            left: 0px;
+            bottom: 0px;
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 15px;
+            font-family: calibri, "Trebuchet MS", sans-serif;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        table tr:nth-child(even) {
+          background-color: #eeeeee;
+        }
+        table tr:nth-child(odd) {
+          background-color: #add8e6
+        }
+        table tr:nth-child(2) {
+          background-color: gold;
+        }
+        table tr:nth-child(3) {
+          background-color: silver;
+        }
+        table tr:nth-child(4) {
+          background-color: #cd7f32;
+        }
+        @media only screen and (max-height: 800px) and (max-width: 800px){
+            #footer {
+                display: none;
+            }
+            table, th, td {
+                padding: 5px;
+                font-family: "Trebuchet MS", sans-serif;
+                font-size: 1.5vmax;
+            }
+            #clubDiv{
+                font-size: 1.5vmax;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <img class="v-center" style = "height: 10vh; float: left;" src = "./BB.png">
+        <div class="v-center" style = "font-size: 3vh; font-weight: bold; text-align: right;">
+            <select id="club" onchange="changeClub()">
+                <option value="BetterBrawlers">Better</option>
+                <option value="BestBrawlers">Best</option>
+                <option value="BackupBrawlers">Backup</option>
+                <option value="BabyBrawlers">Baby</option>
+                <option value="BuddyBrawlers">Buddy</option>
+                <option value="BrazenBrawlers">Brazen</option>
+            </select>
+        </div>
+    </div>
+    <!--
+    <div id="top-scroller-wrapper">
+        <div id="top-scroller">
+        </div>
+    </div>
+    -->
+    <div id = "clubDiv">
+        <table id = "clubGains">
+        </table>
+    </div>
+    <div id = "leaderboardDiv">
+        <table class = "leaderboard">
+            <tr><th>Rank</th><th>Member</th><th>Role</th><th>Trophies</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th><th>Sunday</th><th>Raw Gains</th><th>Adjusted Gains</th><!--<th>Ballots</th>--></tr>
+        </table>
+    </div>
+    <!--
+    <div id = "footer">
+        Made with 💖 by <a href="https://1e9end.github.io/">1egend</a>. View <a href="https://www.github.com/1e9end/bb">source code</a>
+    </div>
+    -->
+</body>
+</html>
