@@ -116,7 +116,7 @@ function update(clubInfo){
 		leaderboard.appendChild(node);
 	}
 
-	document.getElementById("clubGains").innerHTML = ``;
+	document.getElementById("club-gains").innerHTML = ``;
 	let node = document.createElement("TR");
 	let k = 0;
 	for (let n in c){
@@ -127,7 +127,7 @@ function update(clubInfo){
 		node.appendChild(createCell((k == 10 ? "RAW: ":"") + c[n], (k == 0 || k == 10)));
 		++k;
 	}
-	document.getElementById("clubGains").appendChild(node);
+	document.getElementById("club-gains").appendChild(node);
 };
 
 function changeClub(){
