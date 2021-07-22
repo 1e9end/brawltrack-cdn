@@ -1,3 +1,15 @@
+var navOn = false;
+function toggleNav() {
+	if (!navOn){
+		document.getElementById("sidenav").style.width = "250px";
+		navOn = true;
+		return;
+	}
+
+	document.getElementById("sidenav").style.width = "0";
+	navOn = false;
+}
+
 var clubInfo;
 
 function compensation(gains, trophies){
@@ -32,10 +44,9 @@ function getLuminosity(k){
 	return (r + g + b)/255; // per ITU-R BT.709
 }
 
-const alps = ["a", "b", "c", "d", "e", "f", "g"];
-function p(name, trophies, start, role, a, b, c, d, e, f, g, color){
+function p(member){
 	let r;
-	switch(role){
+	switch(member.role){
 		case "member":
 			r = "Member";
 		break;
@@ -43,7 +54,7 @@ function p(name, trophies, start, role, a, b, c, d, e, f, g, color){
 			r = "Senior";
 		break;
 		case "vicePresident":
-			r = "VP";
+			r = "Vice President";
 		break;
 		case "president":
 			r = "President";
@@ -51,25 +62,37 @@ function p(name, trophies, start, role, a, b, c, d, e, f, g, color){
 		case "CLUB":
 			r = "Club";
 	}
-	return {
-		name: name,
+	let ans = {
+		name: member.name,
 		role: r,
-		trophies: trophies,
-		a: a == -1 ? "TBD": a - start,
-		b: b == -1 ? "TBD": b - a,
-		c: c == -1 ? "TBD": c - b,
-		d: d == -1 ? "TBD": d - c, 
-		e: e == -1 ? "TBD": e - d,
-		f: f == -1 ? "TBD": f - e,
-		g: g == -1 ? "TBD": g - f,
-		raw: trophies - start,
-		total: trophies - start + compensation(trophies - start, trophies),
-		start: start,
-		//ballots: tally(trophies - start, trophies) 
-		//color: color,
+		start: member.start,
+		trophies: member.trophies,
+		stats: [],
+		raw: member.trophies - member.start,
+		total: member.trophies - member.start + compensation(member.trophies - member.start, member.trophies),
+		icon: member.icon,
+		color: member.nameColor,
+		// ballots: tally(trophies - start, trophies) 
 	};
+
+	let last = member.start;
+	for (let i = 0; i < member.stats.length; ++i){
+		let v = member.stats[i];
+		if (v == -1){
+			ans.stats.push("TBD");
+			continue;
+		}
+
+		ans.stats.push(v - last);
+		last = v;
+	}
+
+	return ans;
 }
 
+
+
+/**
 function createCell(txt, bold){
 	let box = document.createElement("TD");
 	let node = document.createTextNode(txt);
@@ -79,7 +102,6 @@ function createCell(txt, bold){
 	box.appendChild(node);
 	return box;
 }
-
 function update(clubInfo){
 	let info = [];
 	let total = 0;
@@ -129,6 +151,87 @@ function update(clubInfo){
 	}
 	document.getElementById("club-gains").appendChild(node);
 };
+**/
+
+function createDiv(c, text){
+	let x = document.createElement("DIV");
+	x.className = c;
+	let s = document.createElement("SPAN");
+	s.textContent = text;
+	x.appendChild(s);
+	return x;
+}
+function createMemberDiv(rank, member){
+	let d = document.createElement("DIV");
+	d.className = "member";
+
+	d.appendChild(createDiv("member-rank", rank));
+
+	if (member.icon){
+		let x = document.createElement("DIV");
+		x.className = "member-icon-wrapper";
+
+		let icon = document.createElement("IMG");
+		icon.src = `https://cdn.brawlify.com/profile/${member.icon}.png`;
+		icon.className = "member-icon";
+
+		x.appendChild(icon);
+		d.appendChild(x);
+	}
+
+	let nd = document.createElement("DIV");
+	nd.className = "member-name-wrapper";
+
+	let n = createDiv("member-name", member.name);
+	let c = member.color?.substring(4);
+	n.style.color = "#" + c;
+	let r = createDiv("member-role", member.role);
+	nd.appendChild(n);
+	nd.appendChild(r);
+	d.appendChild(nd);
+
+	d.appendChild(createDiv("member-stats", member.trophies));
+	for (let i = 0; i < member.stats.length; ++i){
+		d.appendChild(createDiv("member-stats", member.stats[i]));
+	}
+
+	d.appendChild(createDiv("member-stats", member.raw));
+	d.appendChild(createDiv("member-stats", member.total));
+
+	return d;
+}
+
+function updateClub(clubDetails){
+	document.getElementById("club-badge").src = `https://cdn.brawlify.com/club/${clubDetails.badgeId}.png`;
+	document.getElementById("club-name").textContent = clubDetails.name;
+	document.getElementById("club-tag").textContent = clubDetails.tag;
+	document.getElementById("club-description").textContent = clubDetails.description;
+	document.getElementById("club-required-trophies").textContent = clubDetails.requiredTrophies;
+	let n = clubDetails.type;
+	document.getElementById("club-type").textContent = clubDetails.type.split(/(?=[A-Z])/).join(" ").toUpperCase();
+}
+
+function update(clubInfo){
+	document.getElementById("leaderboard").innerHTML = ``;
+	let m = [];
+	for (let i = 0; i < clubInfo.length; ++i){
+		if (clubInfo[i].role == "CLUB"){
+			updateClub(clubInfo[i]);
+			continue;
+		}
+		m.push(p(clubInfo[i]));
+	}
+
+	m.sort((a, b)=>{
+		return b.total - a.total;
+	})
+	for (let i = 0; i < m.length; ++i){
+		document.getElementById("leaderboard").appendChild(createMemberDiv(i + 1, m[i]));
+	}
+
+	let scrollbar = document.getElementById("leaderboard").offsetWidth - document.getElementById("leaderboard").clientWidth;
+	document.getElementById("leaderboard-header").style.paddingRight = `${scrollbar}px`;
+}
 
 function changeClub(){
 	var club = document.getElementById("club").value;
@@ -139,7 +242,6 @@ function changeClub(){
 		async: false
 	}).done(res => {
 		update(res);
-		console.log("Successfully loaded " + club + "'s club info from server");
 	});
 }
 
