@@ -245,5 +245,5 @@ function changeClub(){
 	});
 }
 
-document.getElementById("club").value = "BetterBrawlers";
+document.getElementById("club").value = "28GYUQJ9Q";
 changeClub();
